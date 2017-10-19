@@ -1,0 +1,206 @@
+struct appin
+{
+    float4 position  : POSITION;
+    float4 color0    : COLOR0;    
+    float3 normal	 : NORMAL;    
+    float  size		 : PSIZE; 
+};
+
+struct vertout
+{
+    float4 position  : POSITION;
+    float4 color0    : COLOR0;              
+    float  size		 : PSIZE;
+    float4  params	 : COLOR1;
+    float4 params2   : TEXCOORD1;   
+};
+
+//light properties. only 1 light, defined here. Move it as a property into C# code in future
+float4 lightAmbient = float4(0.3, 0.3, 0.3, 1);
+float4 lightDiffuse = float4(1.0, 1.0, 1.0, 1 );
+float4 lightSpecular = float4(0.6, 0.6, 0.6, 1);
+
+float4 materialSpecular = float4(1.0, 1.0, 1.0, 1);
+float4 materialEmissive = float4(0.2, 0.2, 0.2, 1);
+
+float mShininess = 60; //set the shininess of the material
+
+float4 lightPosition = float4( 0.0, 1000.0, 0.0, 1 );	  //move to C# code in future
+
+//accumulators
+float4 Ambient;
+float4 Diffuse;
+float4 Specular;
+
+float calculateSizeProper( float sizeFactor, float distanceToPoint, float3 viewParams)
+{ 
+  return 1.0*sizeFactor*viewParams.y/(distanceToPoint );	
+}
+
+float3 convertToEyeSpace(float4x4 modelViewIT, float3 vect)
+{
+	return normalize(mul(modelViewIT, float4(vect,0)).xyz);
+}
+
+float calculateDeltaZ(float3 vertPosition, float3 eyePosition, float farcull)
+{
+	return length( vertPosition - eyePosition )/farcull;
+}
+
+//botsch
+vertout main_pass1( appin IN,
+              uniform float4x4 modelViewProj, 
+              uniform float4x4 modelViewIT,
+              uniform float4x4 modelView,
+              uniform float  sizeFactor,  
+              uniform float3	eyePos,			//eye position                         
+              uniform float zoffset,
+              uniform float splatRotationCutoffDist,
+              uniform float farcull,
+              uniform float3 viewParams			//width, height, FOV
+              )
+{
+  vertout OUT;
+           
+  OUT.position = mul( modelViewProj, IN.position);    
+  float distance = length(OUT.position.xyz);
+  
+  //OUT.size = calculateSize( sizeFactor, IN.position.xyz, eyePos, viewParams ); 
+  OUT.size = calculateSizeProper( sizeFactor, distance, viewParams ); 
+  OUT.params = float4(0,0,0,0);   
+  OUT.color0 = float4( IN.color0.xyz, calculateDeltaZ( IN.position.xyz, eyePos, farcull)+zoffset);    
+      
+  if( distance > splatRotationCutoffDist )
+  {
+    //do not calculate unneccesarry information
+    OUT.params.z = 1;    //early return flag for fragment shader    
+    return OUT;
+  }
+      
+  //normal vector has to be in eye space coordinates
+  float3 normalEye = convertToEyeSpace(modelViewIT, IN.normal);
+  
+  //botsch params  
+  OUT.params.x = normalEye.x/normalEye.z;			// -nx/nz
+  OUT.params.y = normalEye.y/normalEye.z;			// -ny/nz
+      
+  return OUT;    
+}
+
+void pointLight(int i, float3 normal, float3 eye, float3 ecPosition3)
+{
+   float nDotVP;       // normal . light direction
+   float nDotHV;       // normal . light half vector
+   float pf;           // power factor
+   float attenuation;  // computed attenuation factor
+   float d;            // distance from surface to light source
+   float3  VP;           // direction from surface to light position
+   float3  halfVector;   // direction of maximum highlights
+
+   // Compute vector from surface to light position
+   VP = lightPosition.xyz - ecPosition3;
+
+   // Compute distance between surface and light position
+   d = length(VP);
+
+   // Normalize the vector from surface to light position
+   VP = normalize(VP);
+
+   // Compute attenuation
+   attenuation = 1.0; 
+	
+   halfVector = normalize(VP + eye);
+
+   nDotVP = max(0.0, dot(normal, VP));
+   nDotHV = max(0.0, dot(normal, halfVector));
+
+   if (nDotVP == 0.0)
+   {
+       pf = 0.0;
+   }
+   else
+   {
+       pf = pow(nDotHV, mShininess);
+
+   }
+   Ambient  += lightAmbient * attenuation;
+   Diffuse  += lightDiffuse * nDotVP * attenuation;
+   Specular += lightSpecular * pf * attenuation;
+}
+
+//returns color
+float4 flight(float3 normal, float4 ecPosition, float4 in_color)
+{
+  float4 color;
+  float3 ecPosition3;
+  float3 eye;
+
+  ecPosition3 = float3( ecPosition.xyz / ecPosition.w);
+  eye = float3 (0.0, 0.0, 1.0);
+
+  // Clear the light intensity accumulators
+  Ambient  = float4 (0.0);
+  Diffuse  = float4 (0.0);
+  Specular = float4 (0.0);
+
+  pointLight(0, normal, eye, ecPosition3);
+
+  color = Ambient  * materialEmissive + Diffuse  * in_color;
+  color += Specular * materialSpecular;
+      
+  color = clamp( color, 0.0, 1.0 );
+    
+	return color;
+}
+
+
+vertout main_pass2( appin IN,
+              uniform float4x4 modelViewProj,
+              uniform float4x4 modelViewIT,
+              uniform float4x4 modelView,
+              uniform float  sizeFactor,                
+              uniform float splatRotationCutoffDist,
+              uniform float3 eyePos,			//eye position                
+              uniform float farcull,
+              uniform float3 viewParams			//width, height, FOV              
+              )
+{
+	vertout OUT;
+         
+  OUT.position = mul( modelViewProj, IN.position);    
+  float distance = length(OUT.position.xyz);  
+  
+  OUT.params = float4(0,0,0,0);       	
+	OUT.size = calculateSizeProper( sizeFactor, distance, viewParams ); 
+		
+	//light calculation begin    
+  // Eye-coordinate position of vertex, needed in various calculations
+  //normal has to be in eye space coordinates
+  float3 normalEye = convertToEyeSpace(modelViewIT, IN.normal); 
+          
+  float4 ecPosition = mul( modelView, IN.position);      
+	OUT.color0 = float4( flight(normalEye, ecPosition, IN.color0).xyz, calculateDeltaZ( IN.position.xyz, eyePos, farcull) );   
+	
+  if( distance >splatRotationCutoffDist )
+  {  
+    OUT.params.z = 1;    //early return flag for fragment shader        
+    return OUT;
+  }  
+         
+  //botsch    
+  OUT.params.x = normalEye.x/normalEye.z;			// -nx/nz
+  OUT.params.y = normalEye.y/normalEye.z;			// -ny/nz
+          
+  return OUT;   
+}
+
+vertout main_pass3( appin IN,
+              uniform float4x4 modelViewProj              
+              )
+{
+   vertout OUT;
+   OUT.position = mul( modelViewProj, IN.position);    
+   OUT.color0 = IN.color0;        
+   
+   return OUT;        
+}

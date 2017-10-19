@@ -1,0 +1,105 @@
+struct vertin
+{
+    float4 position  : POSITION;
+    float4 color0    : COLOR0;
+    float4 params    : COLOR1;			
+    float4 texcoord0 : TEXCOORD0;    
+    float4 params2  : TEXCOORD1;             
+};
+
+struct fragout
+{
+	float4 color    : COLOR;
+};
+ 
+
+void main_pass1(vertin IN,
+			out float4 color: COLOR,
+			out float depth : DEPTH,
+			uniform sampler2D text		//incoming texture
+			) 
+{ 
+	float alpha = tex2D( text, IN.texcoord0.xy).a;
+	
+	//discard fragments with small alpha
+	if( alpha < 0.1 )
+	{
+		discard;
+	}
+			
+	depth = IN.color0.w;
+	
+	//IN.params.z > 0.5 means that a fragment is past the splat rotation cutoff distance and it does not have to be rotated
+  if( IN.params.z > 0.5 )
+  {
+    color = float4(IN.color0.xyz, alpha );
+    return;
+  }	
+	
+	//parametrized coordinates
+	float i = (IN.texcoord0.x - 0.5)*2;
+	float j = (IN.texcoord0.y - 0.5)*2;
+	
+	float dz = IN.params.x*i - IN.params.y*j;
+	
+	float l = length(float3(i,j,2*dz));
+	
+	if( l <1 )
+	{		
+		color = float4(IN.color0.xyz, alpha );		
+	}
+	else
+	{
+		discard;
+	}
+}
+
+void main_pass2(vertin IN,
+			out float4 color: COLOR,	
+			out float depth : DEPTH,		
+			uniform sampler2D text		//incoming texture
+			)
+{ 
+	float alpha = tex2D( text, IN.texcoord0.xy).a;
+	
+	//discard fragments with small alpha
+	if( alpha < 0.1 )
+	{
+		discard;
+  }
+  
+	depth = IN.color0.w;
+
+  //IN.params.z > 0.5 means that a fragment is past the splat rotation cutoff distance and it does not have to be rotated
+  if( IN.params.z > 0.5 )
+  {
+    color = float4(IN.color0.xyz, alpha );            
+    return;
+  }
+
+	//parametrized coordinates
+	float i = (IN.texcoord0.x - 0.5)*2;
+	float j = (IN.texcoord0.y - 0.5)*2;
+	
+	//float r2 = i*i+j*j;
+	
+	float dz = IN.params.x*i - IN.params.y*j;
+		
+	float l = length(float3(i,j,2*dz));
+	
+	if( l < 1  )
+	{		
+		color = float4(IN.color0.xyz, alpha );				
+	}
+	else
+	{
+		discard;
+	}
+}
+
+void main_pass3(vertin IN,
+			out float4 color: COLOR
+			)
+{
+
+}

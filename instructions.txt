@@ -1,0 +1,83 @@
+                              INSTRUCTIONS
+
+
+1.Introduction                              
+TerraForm is application that renders LIDAR datasets with three different point based rendering techniques. 
+
+2. Compiling
+Application is written in C# and can be compiled with Visual Studio 2008 (the solution file is provided). Tao library is needed for OpenGL and Cg. It can be obtained from here: http://www.taoframework.com/. 
+
+3. Obtaining datasets
+In order for application to be useful, LIDAR datasets in LAS file format will be needed. Example from the article can be obtained here: http://liblas.org/samples/Serpent%20Mound%20Model%20LAS%20Data.las. Note that datasets with large distances between points (escpecially if older) might produce unsatisfactory results. Ther is a setting in the application that applies a scaling factor to each of the coordinates, which might help in such a case. 
+
+4. Running the application  
+Important note: gauss2D.png, circle.png and square.png have to be in the '/sprites' subdirectory of the application work directory. 
+
+Before running the application, make sure you installed the Tao library appropriately and set all the paths to its depending libraries, or the application will not work. 
+
+Once in the application, there is an option menu with options that can be set only before loading the dataset(s). Even if changes are allowed later, not all changes can be applied. Available options:
+- Force preprocessing - forces preprocessing, even if the dataset has been loaded before. This is a must in case you want to construct an index file for a quad tree with a new structure (i.e. a different maximum number of points per leaf node value)
+- Render Engine:
+    a.) simple points - use simple opengl points for rendering. 
+    b.) Shaders - the method presented in the article
+- Settings - settings that concern various aspects of visualization
+  a.) Rendering
+    - GPU memory - amount of video RAM available
+    - field of view 
+    - maximum viewing distance
+    - minimum viewing distance
+    - buffered FOV - angle that determines amount of buffered points 
+    - buffered distance - distance that determines amount of buffered points 
+    - buffered position radius - a circle around viewer position that determines buffered points
+  b.) Normal vector max iterations - concerns the amount of time that will be dedicated to normal vector calculation. Higher values mean lenghtier calculations.
+  c.) General
+      - FPS limit - max. frames/s can be limited with this option
+      - Max points per leaf - maximum number of point that a leaf node will contain. Values between 5 000 and 100 000 are appropriate. Larger datasets perform better with large values, because less memory is dedicated to index files and les VBOs are pushed onto the GPU. Higher values also mean smaller index files.     
+  d.) Global point scaling factors - sometimes the points are too far apart and their coordinates must be scaled for display. This can be done with the settings found in this group.
+
+ Note 1: Rendering method using shaders might not work on some cards. Possible reasons:
+ - outdated drivers, try installing new version
+ - some ATI cards have had problems with transfer of vertex's texture coordiantes from vertex to fragment shaders. 
+ - old video cards that do not support required shader instructions will not be able to compile the shader code. Errors will be printed in the console if this is the case 
+  
+5. Loading datasets into the application
+Once the application is compiled and started, LIDAR dataset can be loaded by selecting the File->Open menu option or by clicking the Open icon in the toolbar. Only LIDAR datasets in LAS file format can be opened. To load multiple LAS files that are a part of the same area into the same 3D world, load them one by one by repeating the file opening process.
+
+6. Interaction and rendering configuration
+
+Movement controls:
+- W - move forward
+- S - move backward
+- A - strafe left
+- D - strafe right
+- C - descend
+- SPACE - ascend
+- G - show grid (may cause slow performance)
+- mouse movement with left button pressed - look around
+- SHIFT + any movement - speed up movement
+
+There are also four panels on the side. Metrics panel displays the performance information that is gathered while the application is running. It is divided in the data management section and the rendering section. The panel is updated every 5 seconds. There is also a third 'Diag' tab, where dynamic leaf loading and rendering threads can be stopped separately'. Memory consumption can also be printed.
+
+The second panel is configuration form, where some rendering parameters can be set. 
+Configurable parameters:
+- coloring mode - determines the way in which points are colored. Points need to be reloaded in order for change to be visible. This can be done by looking the other way, so the points fall out of the buffered area. Points can be colored in two ways:
+  - classification - useful only if classification data is present in the LIDAR dataset. Otherwise all points will have the same color.
+  - height - points with the same height will have the same color
+  - monochrome - all points will be gray. Default value 
+- point size - determines the scaling factor of all points. Points are still attenuated with distance, this is just a global scaling modification factor.  
+- point texture - the texture that is used for the point sprite. Determines the shape of the splat. 
+- Z-offset - determines the maximum distance between two blended points.
+- splat rotation cutoff distance - radius inside which splats are rotated per their normal vector
+- per node LOD - turn LOD on and off. 'Off' setting will always render from top to bottom of the quadtree, while 'On' setting can stop rendering at the inner tree node, if it is far enough.  
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="HydroLiDAR">
+</Property><Property Name="Solution File" Value="C:\dev\HydroLiDAR\HydroLiDAR.sln">
+</Property><Property Name="User Options File" Value="C:\dev\HydroLiDAR\HydroLiDAR.suo">
+</Property><Property Name="Date" Value="Thursday, September 01, 2011">
+</Property><Property Name="Time" Value="11:22 AM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="HydroLiDAR.sln" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR.sln">
+</Event><Event ErrorLevel="0" Project="" Source="HydroLiDAR.suo" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR.suo">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\HydroLiDAR.vbproj" Description="Project file successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\HydroLiDAR.vbproj">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\HydroLiDAR.vbproj.user" Description="Project user file successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\HydroLiDAR.vbproj.user">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\clsMain.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\clsMain.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\frmMain.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\frmMain.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\frmMain.Designer.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\frmMain.Designer.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\AssemblyInfo.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Application.Designer.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Application.Designer.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Resources.Designer.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Resources.Designer.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Settings.Designer.vb" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Settings.Designer.vb">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Application.myapp" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Application.myapp">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Settings.settings" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Settings.settings">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\frmMain.resx" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\frmMain.resx">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\My Project\Resources.resx" Description="File successfully backed up as C:\dev\HydroLiDAR\Backup\HydroLiDAR\My Project\Resources.resx">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\HydroLiDAR.vbproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="HydroLiDAR" Source="HydroLiDAR\HydroLiDAR.vbproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="HydroLiDAR.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="HydroLiDAR.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="HydroLiDAR" Source="HydroLiDAR\HydroLiDAR.vbproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
